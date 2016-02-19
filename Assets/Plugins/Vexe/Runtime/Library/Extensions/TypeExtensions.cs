@@ -260,9 +260,11 @@ namespace Vexe.Runtime.Extensions
                         return TypeNameGauntlet(type);
 
                     var builder = new StringBuilder();
-                    var name = type.Name;
-                    var index = name.IndexOf("`");
-                    builder.Append(name.Substring(0, index));
+                    var fullName = type.FullName;
+                    var index = fullName.IndexOf("`");
+                    var name = fullName.Substring(0, index);
+                    name = name.Substring(name.LastIndexOf(".")+1);
+                    builder.Append(name);
                     builder.Append('<');
                     var args = type.GetGenericArguments();
                     for (int i = 0; i < args.Length; i++)
