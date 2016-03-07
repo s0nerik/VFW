@@ -832,7 +832,11 @@ namespace Vexe.Editor.GUIs
             Rect position;
             if (CanDrawControl(out position, data))
             {
+#if UNITY_5_3
                 return EditorGUI.InspectorTitlebar(position, foldout, target, true);
+#else
+                return EditorGUI.InspectorTitlebar(position, foldout, target);
+#endif
             }
 
             return foldout;
