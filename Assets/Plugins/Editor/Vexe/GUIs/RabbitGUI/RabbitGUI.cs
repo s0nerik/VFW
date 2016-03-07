@@ -59,7 +59,6 @@ namespace Vexe.Editor.GUIs
         private bool _allocatedMemory;
         private bool _storedValidRect;
         private int _id;
-        private static BetterPrefs _prefs;
         private float _widthCorrection = 0f;
 
         static MethodCaller<object, string> _scrollableTextArea;
@@ -91,13 +90,13 @@ namespace Vexe.Editor.GUIs
         private bool _pendingReset;
 #endif
 
-        public RabbitGUI()
+        public RabbitGUI(EditorRecord prefs)
         {
             _currentPhase = GUIPhase.Layout;
             _controls     = new List<GUIControl>();
             _blocks       = new List<GUIBlock>();
             _blockStack   = new Stack<GUIBlock>();
-            _prefs        = BetterPrefs.GetEditorInstance();
+            this.prefs    = prefs;
 
             #if dbg_level_1
                 Debug.Log("Instantiated Rabbit");
@@ -143,8 +142,11 @@ namespace Vexe.Editor.GUIs
         {
             if (!_storedValidRect && _validRect.HasValue)
             {
-                var key = RuntimeHelper.CombineHashCodes(_id, "rabbit_coords");
-                _prefs.Vector3s[key] = new Vector3(_validRect.Value.x, _validRect.Value.y);
+                int key = RuntimeHelper.CombineHashCodes(_id, "rabbit_coords");
+                int keyX = RuntimeHelper.CombineHashCodes(key, "x");
+                int keyY = RuntimeHelper.CombineHashCodes(key, "y");
+                prefs[keyX] = _validRect.Value.x;
+                prefs[keyY] = _validRect.Value.y;
                 _storedValidRect = true;
             }
         }
@@ -156,14 +158,17 @@ namespace Vexe.Editor.GUIs
 
             if (!_validRect.HasValue)
             {
-                var key = RuntimeHelper.CombineHashCodes(_id, "rabbit_coords");
-                Vector3 prevCoords;
-                if (_prefs.Vector3s.TryGetValue(key, out prevCoords))
+                int key = RuntimeHelper.CombineHashCodes(_id, "rabbit_coords");
+                int keyX = RuntimeHelper.CombineHashCodes(key, "x");
+                int keyY = RuntimeHelper.CombineHashCodes(key, "y");
+                RecordValue prevX, prevY;
+                if (prefs.TryGetValue(keyX, out prevX))
                 {
                     //Log("Seems we changed play modes and rabbit doesn't have a coord. but we have in store a prev coord from a previous editor session that should work");
+                    prevY = prefs[keyY];
                     var tmp = new Rect();
-                    tmp.x = prevCoords.x;
-                    tmp.y = prevCoords.y;
+                    tmp.x = prevX;
+                    tmp.y = prevY;
                     _validRect = tmp;
                 }
             }

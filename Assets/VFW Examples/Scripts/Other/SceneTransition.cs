@@ -9,7 +9,7 @@ namespace Vexe.Runtime.Types
 	/// when a certain event is fired like a UI button click etc
 	/// </summary>
 	
-	public class SceneTransition : BetterBehaviour
+	public class SceneTransition : BaseBehaviour
 	{
 		[SelectScene, Comment("Note: scene will only load if it was included in the build settings and the player is running")]
 		public string scene;
