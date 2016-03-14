@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -13,7 +12,9 @@ namespace Vexe.Editor.Drawers
 		private string[] _variables;
 		private int _current;
 
-		private Animator _animator;
+        private string _lastMemberValue;
+
+        private Animator _animator;
 		private Animator animator
 		{
 			get
@@ -83,11 +84,16 @@ namespace Vexe.Editor.Drawers
 				if (_variables.IsNullOrEmpty())
 					FetchVariables();
 
+			    if (memberValue != _lastMemberValue)
+			        _current = _variables.IndexOf(memberValue);
+
 				var selection = gui.Popup(displayText, _current, _variables);
 				{
 					if (_current != selection || memberValue != _variables[selection])
 						memberValue = _variables[_current = selection];
 				}
+
+			    _lastMemberValue = memberValue;
 			}
 		}
 	}

@@ -248,8 +248,29 @@ namespace Vexe.Editor.Types
 
 			HandleUndoAndSet(value);
 
-			if (UnityTarget != null)
-				EditorUtility.SetDirty(UnityTarget);
+		    if (UnityTarget != null)
+		    {
+                EditorUtility.SetDirty(UnityTarget);
+
+                // For [Inline] to work properly, we need to tell Unity that referenced Components are also dirty.
+                if (UnityTarget is Component)
+                {
+                    var target = UnityTarget as Component;
+                    var fields = target.GetType().GetFields();
+                    foreach (var field in fields)
+                    {
+                        if (Attribute.IsDefined(field, typeof(InlineAttribute)))
+                        {
+                            if (field.GetDataType().IsSubclassOf<UnityObject>())
+                            {
+                                var val = field.GetValue(target) as UnityObject;
+                                if (val != null)
+                                    EditorUtility.SetDirty(val);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public T As<T>() where T : class

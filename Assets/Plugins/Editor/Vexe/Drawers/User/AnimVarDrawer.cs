@@ -82,6 +82,9 @@ namespace Vexe.Editor.Drawers {
         // The currently selected parameter
         private AnimatorControllerParameter _currentParameter;
 
+        // Used to determine whether or not the parameter was changed outside this drawer (ex. [Inline])
+        private object _lastMemberValue;
+
         // A mask for which kinds of controller parameters to show
         // By default, this value should show all parameter types
         // This would be of type AnimatorControllerParameterType, but Unity explicitly chose values that were hard to make masks with
@@ -186,11 +189,16 @@ namespace Vexe.Editor.Drawers {
                 if (_parameters.IsNullOrEmpty())
                     FetchVariables();
 
+                if (member.Value != _lastMemberValue)
+                    _current = _names.IndexOf(member.Value);
+
                 var selection = gui.Popup(displayText, _current, _names);
                 {
                     if (_current != selection || Current != _parameters[selection])
                         Current = _parameters[_current = selection];
                 }
+
+                _lastMemberValue = member.Value;
             }
         }
 

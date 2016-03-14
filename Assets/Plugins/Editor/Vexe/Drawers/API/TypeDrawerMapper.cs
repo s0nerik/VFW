@@ -152,6 +152,9 @@ namespace Vexe.Editor
                 // Popups
                 {
                     this.Add<AnimVarAttribute, AnimVarDrawer>()
+                        .Add<AnimStateAttribute, AnimStateDrawer>()
+                        .Add<LayerAttribute, LayerDrawer>()
+                        .Add<SortingLayerAttribute, SortingLayerDrawer>()
                         .Add<PopupAttribute, PopupDrawer>()
                         .Add<InputAxisAttribute, InputAxisDrawer>()
                         .Add<TagsAttribute, TagsDrawer>();

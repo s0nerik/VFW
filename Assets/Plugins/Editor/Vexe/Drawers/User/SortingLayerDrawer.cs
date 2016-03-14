@@ -11,6 +11,8 @@ namespace Vexe.Editor.Drawers
         private string[] _variables;
         private int _current;
 
+        private string _lastMemberValue;
+
         protected override void Initialize()
         {
             if (memberValue == null)
@@ -43,11 +45,16 @@ namespace Vexe.Editor.Drawers
             if (_variables.IsNullOrEmpty())
                 FetchVariables();
 
+            if (memberValue != _lastMemberValue)
+                _current = _variables.IndexOf(memberValue);
+
             var selection = gui.Popup(displayText, _current, _variables);
             {
                 if (_current != selection || memberValue != _variables[selection])
                     memberValue = _variables[_current = selection];
             }
+
+            _lastMemberValue = memberValue;
         }
     }
 }
